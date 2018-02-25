@@ -37,5 +37,5 @@ This project is distributed under the [GNU General Public License,
 v3](http://www.gnu.org/licenses/gpl-3.0.html).
 
 This project makes use of the following components:
-- [qcloudapi-sdk-java](https://github.com/QcloudApi/qcloudapi-sdk-java) (License Unknown)
+- [qcloudapi-sdk-java](https://github.com/QcloudApi/qcloudapi-sdk-java/tree/2.0.5) 2.0.5 (License Unknown)
 
