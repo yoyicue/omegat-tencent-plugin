@@ -9,13 +9,13 @@ later. Please uninstall the plugin if you are using this version or later.**
 Usage
 =====
 
-Before run, Log in to [Tencent Cloud API Key Console](https://console.cloud.tencent.com/cam/capi), create a SecretId & SecretKey or use an existing SecretId & SecretKey.
+Before run, Log in to [Tencent Cloud API Key Console](https://console.cloud.tencent.com/cam/capi), create a secretId & scretKey or use an existing secretId & scretKey.
 
-1. Download the JAR from
+1. Download the ZIP from
    [releases](https://github.com/yoyicue/omegat-tencent-plugin/releases) and place it
-   into one of the OmegaT plugins folders. OmegaT plugin should be placed in `C:\Program Files\OmegaT\plugins`(Windows),`~/Library/Preferences/OmegaT/plugins/`(Mac OS X) or `$HOME/.omegat/plugins`(Linux/UNIX),  depending on your operating systems.
+   into one of the **OmegaT plugins folders**. OmegaT plugin should be placed in `C:\Program Files\OmegaT\plugins`(Windows),`~/Library/Preferences/OmegaT/plugins/`(Mac OS X) or `$HOME/.omegat/plugins`(Linux/UNIX),  depending on your operating systems.
 
-2. In OmegaT, configure your SecretId & SecretKey in Machine Translation Preferences.
+2. In OmegaT, **configure your secretId & scretKey** in Machine Translation Preferences.
 
 3. In OmegaT, enable **Options > Machine Translate > Tencent Translate**. Translations will
    appear in the Machine Translation pane.
