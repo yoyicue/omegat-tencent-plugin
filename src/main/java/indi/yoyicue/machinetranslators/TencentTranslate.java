@@ -53,8 +53,8 @@ public class TencentTranslate extends BaseTranslate {
 
         QcloudApiModuleCenter module = new QcloudApiModuleCenter(new Tmt(), config);
 
-        String sourcelang = checkMSLang(sLang);
-        String targetlang = checkMSLang(tLang);
+        String sourcelang = tmtLang(sLang);
+        String targetlang = tmtLang(tLang);
 
         TreeMap<String, Object> params = new TreeMap<String, Object>();
         params.put("sourceText", text);
@@ -76,7 +76,7 @@ public class TencentTranslate extends BaseTranslate {
         return translation;
     }
 
-    private String checkMSLang(Language language) {
+    private String tmtLang(Language language) {
         String lang = language.getLanguage();
         if (lang.equalsIgnoreCase("zh-cn")) {
             return "zh";
