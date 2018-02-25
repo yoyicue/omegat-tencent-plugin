@@ -78,7 +78,7 @@ public class TencentTranslate extends BaseTranslate {
 
     private String tmtLang(Language language) {
         String lang = language.getLanguage();
-        if (lang.equalsIgnoreCase("zh-cn")) {
+        if (lang.equalsIgnoreCase("zh-cn") || lang.equalsIgnoreCase("zh-hk") || lang.equalsIgnoreCase("zh-tw")) {
             return "zh";
         } else if (lang.equalsIgnoreCase("ja")) {
             return "jp";
