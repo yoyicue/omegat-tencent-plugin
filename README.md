@@ -1,7 +1,7 @@
 OmegaT Tencent Translate plugin
 ==========================
 
-This is a plugin to allow OmegaT to source machine translations from [Tencent Cloud](https://cloud.tencent.com/product/tmt)
+This is a plugin to allow [OmegaT](http://omegat.org/) to source machine translations from [Tencent Cloud](https://cloud.tencent.com/product/tmt)
 
 **The functionality provided by this plugin is built into OmegaT 4.1.0 and
 later. Please uninstall the plugin if you are using this version or later.**
@@ -13,7 +13,7 @@ Before run, Log in to [Tencent Cloud API Key Console](https://console.cloud.tenc
 
 1. Download the JAR from
    [releases](https://github.com/yoyicue/omegat-tencent-plugin/releases) and place it
-   into one of the OmegaT plugins folders.
+   into one of the OmegaT plugins folders. OmegaT plugin should be placed in `C:\Program Files\OmegaT\plugins`(Windows),`~/Library/Preferences/OmegaT/plugins/`(Mac OS X) or `$HOME/.omegat/plugins`(Linux/UNIX),  depending on your operating systems.
 
 2. In OmegaT, configure your SecretId & SecretKey in Machine Translation Preferences.
 
