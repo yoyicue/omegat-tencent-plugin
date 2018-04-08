@@ -85,7 +85,7 @@ public class TencentTranslate extends BaseTranslate {
         } else if (lang.equalsIgnoreCase("ko")) {
             return "kr";
         } else {
-            return language.getLanguageCode();
+            return language.getLanguageCode().toLowerCase();
         }
 
     }
