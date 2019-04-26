@@ -3,10 +3,14 @@ package indi.yoyicue.machinetranslators;
 import java.awt.Window;
 import java.util.TreeMap;
 
-import com.qcloud.QcloudApiModuleCenter;
-import com.qcloud.Module.Tmt;
-import com.qcloud.Utilities.Json.JSONObject;
-
+import com.google.gson.Gson;
+import com.tencentcloudapi.common.Credential;
+import com.tencentcloudapi.common.exception.TencentCloudSDKException;
+import com.tencentcloudapi.common.profile.ClientProfile;
+import com.tencentcloudapi.common.profile.HttpProfile;
+import com.tencentcloudapi.tmt.v20180321.TmtClient;
+import com.tencentcloudapi.tmt.v20180321.models.TextTranslateRequest;
+import com.tencentcloudapi.tmt.v20180321.models.TextTranslateResponse;
 import org.omegat.core.Core;
 import org.omegat.core.machinetranslators.BaseTranslate;
 import org.omegat.gui.exttrans.MTConfigDialog;
@@ -45,33 +49,33 @@ public class TencentTranslate extends BaseTranslate {
         String SecretId = getCredential(PROPERTY_API_SECRET_ID);
         String SecretKey = getCredential(PROPERTY_API_SECRET_KEY);
 
-        TreeMap<String, Object> config = new TreeMap<String, Object>();
-        config.put("SecretId", SecretId);
-        config.put("SecretKey", SecretKey);
-        config.put("RequestMethod", "GET");
-        config.put("DefaultRegion", "bj");
+        Credential cred = new Credential(SecretId, SecretKey);
+        HttpProfile httpProfile = new HttpProfile();
+        httpProfile.setEndpoint("tmt.tencentcloudapi.com");
 
-        QcloudApiModuleCenter module = new QcloudApiModuleCenter(new Tmt(), config);
+        ClientProfile clientProfile = new ClientProfile();
+        clientProfile.setHttpProfile(httpProfile);
+
+        TmtClient client = new TmtClient(cred, "ap-guangzhou", clientProfile);
 
         String sourcelang = tmtLang(sLang);
         String targetlang = tmtLang(tLang);
 
         TreeMap<String, Object> params = new TreeMap<String, Object>();
-        params.put("sourceText", text);
-        params.put("source", sourcelang);
-        params.put("target", targetlang);
+        params.put("SourceText", text);
+        params.put("Source", sourcelang);
+        params.put("Target", targetlang);
+        params.put("ProjectId", "0");
+
+        Gson gson = new Gson();
+        TextTranslateRequest req = TextTranslateRequest.fromJsonString(gson.toJson(params), TextTranslateRequest.class);
 
         String translation;
-        try {
-            String result = module.call("TextTranslate", params);
-            JSONObject json_result = new JSONObject(result);
-            if (json_result.getInt("code") == 0) {
-                translation = json_result.getString("targetText");
-            } else {
-                translation = "Message:"+ json_result.getString("message");
-            }
-        } catch (NullPointerException e) {
-            return null;
+        try{
+            TextTranslateResponse resp = client.TextTranslate(req);
+            translation = resp.getTargetText();
+        } catch (TencentCloudSDKException e) {
+            translation = e.toString();
         }
         return translation;
     }
