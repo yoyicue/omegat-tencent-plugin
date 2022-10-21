@@ -1,199 +1,34 @@
-apply plugin: 'java'
-apply plugin: 'jacoco'
-apply plugin: 'findbugs'
-apply plugin: 'checkstyle'
-apply plugin: 'distribution'
-apply plugin: 'maven'
-apply plugin: 'groovy'
-apply plugin: 'idea'
-apply plugin: 'org.asciidoctor.gradle.asciidoctor'
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
-        classpath 'org.asciidoctor:asciidoctorj-diagram:1.3.1'
-        classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.11'
-    }
+plugins {
+    id 'java'
+    id 'checkstyle'
+    id 'distribution'
+    id 'maven'
+    id("org.omegat.gradle") version "1.5.9"
 }
 
-version = '0.3'
+group 'indi.yoyicue.machinetranslators.TencentTranslate'
 
-configurations {
-    provided
-    integrationTestCompile.extendsFrom testCompile
-    integrationTestRuntime.extendsFrom testRuntime
-}
+version '0.3'
 
-sourceSets {
-    main {
-        compileClasspath += configurations.provided
-        test.compileClasspath += configurations.provided
-        test.runtimeClasspath += configurations.provided
-    }
-
-    integrationTest {
-        compileClasspath += main.output + test.output + configurations.provided
-        runtimeClasspath += main.output + test.output + configurations.provided
-        java {
-            srcDir file('src/integration-test/java')
-        }
-        resources.srcDir file('src/integration-test/resources')
-    }
+omegat {
+    version = "5.4.4"
+    pluginClass = pluginMainClass
 }
 
 repositories {
-    maven {
-        url "https://dl.bintray.com/omegat-org/maven"
-    }
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    compile  'org.slf4j:slf4j-api:1.7.21'
-    provided 'org.omegat:omegat:4.1.0'
-    provided 'commons-io:commons-io:2.4'
-    provided 'commons-lang:commons-lang:2.6'
-    provided 'org.slf4j:slf4j-nop:1.7.21'
-    testCompile 'junit:junit:4.12'
-    testCompile 'xmlunit:xmlunit:1.6'
-    testCompile 'org.madlonkay.supertmxmerge:supertmxmerge:2.0.1'
-    integrationTestCompile 'org.testng:testng:6.9.10'
-    integrationTestCompile 'com.alibaba:fastjson:1.2.17'
-
+    packIntoJar("org.slf4j:slf4j-api:1.7.21")
     // https://mvnrepository.com/artifact/com.tencentcloudapi/tencentcloud-sdk-java
-    compile group: 'com.tencentcloudapi', name: 'tencentcloud-sdk-java', version: '3.0.56'
-}
-//test.useTestNG()
+    packIntoJar("com.tencentcloudapi:tencentcloud-sdk-java:3.1.595")
 
-tasks.withType(JavaCompile) {
-    options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
-}
-
-// Build FatJar
-//
-// It is easy to install a 3rd-party OmegaT plugin which is
-// a single jar file, because all user should do is just to put the jar
-// file into plugins directory.
-jar {
-    from files(sourceSets.main.output.classesDir)
-    from {configurations.compile.collect {zipTree(it)}} {
-        exclude "META-INF/MANIFEST.MF"
-    }
-    manifest {
-        // plugin's main class name is defined in gradle.properties file.
-        attributes("OmegaT-Plugins": pluginMainClass)
-    }
 }
 
 checkstyle {
-    config = resources.text.fromFile("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
     ignoreFailures = true
     toolVersion = '7.1'
 }
-tasks.checkstyleMain.setGroup('Verification')
 
-// Force prevent checkstyle/findbugs on Test.
-task checkstyleTest(overwrite: true) << {}
-task checkstyleIntegrationTest(overwrite: true) << {}
-task findbugsTest(overwrite: true) << {}
-task findbugsIntegrationTest(overwrite: true) << {}
-
-// Treat findbugs failure as warning
-findbugs {
-    ignoreFailures = true
-}
-tasks.withType(FindBugs) {
-    reports {
-      xml.enabled = false
-      html.enabled = true
-    }
-    setGroup('Verification')
-}
-
-task integrationTest(type: Test) {
-    description = "Integration/Acceptance Test"
-    testClassesDir = sourceSets.integrationTest.output.classesDir
-    classpath = sourceSets.integrationTest.runtimeClasspath
-    useTestNG()
-}
-check.dependsOn integrationTest
-integrationTest.mustRunAfter test
-tasks.integrationTest.setGroup('Verification')
-
-// Hack for IntelliJ IDEA 
-idea {
-    module {
-        testSourceDirs += file('src/integration-test/java')
-    }
-}
-
-task sourceJar(type: Jar) {
-    from sourceSets.main.allSource
-    classifier = 'sources'
-}
-
-javadoc {
-    classpath += configurations.provided
-    options.locale = 'en_US'
-}
-
-groovydoc {
-    classpath += configurations.provided
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-asciidoctorj {
-    version = '1.5.4.1'
-}
-
-asciidoctor {
-    backends = ['html5', 'pdf']
-    attributes (
-        'build-gradle': file('build.gradle'),
-        'endpoint-url': 'http://omegat.org',
-        'source-highlighter': 'coderay',
-        'imagesdir' : "$rootDir/docs/images",
-        'toc': 'left',
-        'icons': 'font',
-        'setanchors': '',
-        'idprefix': '',
-        'idseparator': '-',
-        'docinfo1': ''
-    )
-}
-tasks.asciidoctor.setGroup('Documentation')
-
-artifacts {
-    archives jar
-    archives sourceJar
-    //archives javadocJar
-}
-
-distTar {
-  compression = Compression.GZIP
-}
-
-distributions {
-    main {
-        contents {
-            from('README.md', 'COPYING')
-            into('docs') {
-                from 'CHANGELOG.md'
-            }
-            from(sourceJar) {
-                into 'source'
-            }
-            from(jar) {
-                into 'plugin'
-            }
-        }
-    }
-}
-
+distributions {main {contents { from(tasks["jar"], 'README.md', 'LICENSE')}}}
