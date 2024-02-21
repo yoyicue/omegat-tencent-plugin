@@ -21,8 +21,8 @@ repositories {
 
 dependencies {
     packIntoJar("org.slf4j:slf4j-api:1.7.21")
-    // https://mvnrepository.com/artifact/com.tencentcloudapi/tencentcloud-sdk-java
-    packIntoJar("com.tencentcloudapi:tencentcloud-sdk-java:3.1.595")
+    // https://central.sonatype.com/artifact/com.tencentcloudapi/tencentcloud-sdk-java
+    packIntoJar("com.tencentcloudapi:tencentcloud-sdk-java:3.1.966")
 
 }
 
